@@ -169,83 +169,98 @@
   </div>
 
   <script>
-    let currentStep = 0;
-    const steps = document.querySelectorAll(".step");
-    const progressBar = document.getElementById("progressBar");
+  let currentStep = 0;
+  const steps = document.querySelectorAll(".step");
+  const progressBar = document.getElementById("progressBar");
 
-    function showStep(n) {
-      steps.forEach((step, index) => {
-        step.classList.toggle("active", index === n);
+  function showStep(n) {
+    steps.forEach((step, index) => {
+      step.classList.toggle("active", index === n);
+    });
+    const percent = ((n + 1) / steps.length) * 100;
+    progressBar.style.width = percent + "%";
+    progressBar.innerText = `Schritt ${n + 1} von ${steps.length}`;
+  }
+
+  // Weiter-Button mit Validierung pro Schritt
+  document.querySelectorAll(".next-step").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const currentFormPart = steps[currentStep];
+      const inputs = currentFormPart.querySelectorAll("input, select, textarea");
+      let valid = true;
+
+      inputs.forEach(input => {
+        if (!input.checkValidity()) {
+          valid = false;
+          input.classList.add("is-invalid");
+        } else {
+          input.classList.remove("is-invalid");
+        }
       });
-      const percent = ((n + 1) / steps.length) * 100;
-      progressBar.style.width = percent + "%";
-      progressBar.innerText = `Schritt ${n + 1} von ${steps.length}`;
-    }
 
-    document.querySelectorAll(".next-step").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const currentFormPart = steps[currentStep];
-        const inputs = currentFormPart.querySelectorAll("input, select, textarea");
-        let valid = true;
+      if (valid && currentStep < steps.length - 1) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+  });
 
-        inputs.forEach(input => {
-          if (!input.checkValidity()) {
-            valid = false;
-            input.classList.add("is-invalid");
-          } else {
-            input.classList.remove("is-invalid");
-          }
+  // Live Validierung: Entfernt Fehlermeldung beim Korrigieren
+  document.querySelectorAll("input, textarea, select").forEach(input => {
+    input.addEventListener("input", () => {
+      if (input.checkValidity()) {
+        input.classList.remove("is-invalid");
+      }
+    });
+  });
+
+  // Zurück-Button
+  document.querySelectorAll(".prev-step").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (currentStep > 0) currentStep--;
+      showStep(currentStep);
+    });
+  });
+
+  // Zusatzfeld bei Bedarf = Notfall
+  document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
+    input.addEventListener('change', function () {
+      document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
+    });
+  });
+
+  // Dringlichkeit: nur eine Checkbox + Wunschtermin anzeigen
+  document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
+    cb.addEventListener('change', function () {
+      if (this.checked) {
+        document.querySelectorAll('.dringlichkeit-check').forEach(other => {
+          if (other !== this) other.checked = false;
         });
 
-        if (valid && currentStep < steps.length - 1) {
-          currentStep++;
-          showStep(currentStep);
+        const terminBlock = document.getElementById("terminWunschBlock");
+        if (this.id === "spaeter") {
+          terminBlock.classList.remove("d-none");
+        } else {
+          terminBlock.classList.add("d-none");
         }
-      });
-    });
-
-    document.querySelectorAll(".prev-step").forEach(btn => {
-      btn.addEventListener("click", () => {
-        if (currentStep > 0) currentStep--;
-        showStep(currentStep);
-      });
-    });
-
-    document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
-      input.addEventListener('change', function () {
-        document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
-      });
-    });
-
-    document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
-      cb.addEventListener('change', function () {
-        if (this.checked) {
-          document.querySelectorAll('.dringlichkeit-check').forEach(other => {
-            if (other !== this) other.checked = false;
-          });
-
-          const terminBlock = document.getElementById("terminWunschBlock");
-          if (this.id === "spaeter") {
-            terminBlock.classList.remove("d-none");
-          } else {
-            terminBlock.classList.add("d-none");
-          }
-        }
-      });
-    });
-
-    document.getElementById('kontaktformular').addEventListener('submit', function (event) {
-      const form = this;
-      if (!form.checkValidity()) {
-        event.preventDefault();
-        event.stopPropagation();
       }
-      form.classList.add('was-validated');
-      document.getElementById("spinner").style.display = "inline-block";
     });
+  });
 
-    showStep(currentStep);
-  </script>
+  // Validierung beim Absenden
+  document.getElementById('kontaktformular').addEventListener('submit', function (event) {
+    const form = this;
+    if (!form.checkValidity()) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    form.classList.add('was-validated');
+    document.getElementById("spinner").style.display = "inline-block";
+  });
+
+  showStep(currentStep);
+</script>
+
 </body>
 
 </html>
