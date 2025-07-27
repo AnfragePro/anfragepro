@@ -38,8 +38,10 @@
       </div>
 
       <div class="mb-3">
-        <label for="adresse" class="form-label">Adresse des Einsatzortes *</label>
-        <input type="text" name="Adresse" class="form-control" id="adresse" required autocomplete="off">
+        <label class="form-label">Adresse des Einsatzortes *</label>
+        <input type="text" name="Strasse" class="form-control mb-2" id="strasse" placeholder="Strasse und Hausnummer" required>
+        <input type="text" name="PLZ" class="form-control mb-2" id="plz" placeholder="Postleitzahl" required>
+        <input type="text" name="Ort" class="form-control" id="ort" placeholder="Ort / Stadt" required>
       </div>
 
       <div class="mb-3">
@@ -111,17 +113,21 @@
       this.classList.toggle('is-valid', this.value.includes('@'));
       this.classList.toggle('is-invalid', !this.value.includes('@'));
     });
+
     document.getElementById('telefon').addEventListener('input', function () {
       const valid = /^[\\d\\s\\+\\-\\/]{6,}$/.test(this.value);
       this.classList.toggle('is-valid', valid);
       this.classList.toggle('is-invalid', !valid);
     });
 
-    // Adresse: Minimalprüfung
-    document.getElementById('adresse').addEventListener('input', function () {
-      const valid = this.value.trim().length > 4;
-      this.classList.toggle('is-valid', valid);
-      this.classList.toggle('is-invalid', !valid);
+    // Adresse-Felder Validierung
+    ['strasse', 'plz', 'ort'].forEach(id => {
+      const feld = document.getElementById(id);
+      feld.addEventListener('input', function () {
+        const valid = this.value.trim().length > 2;
+        this.classList.toggle('is-valid', valid);
+        this.classList.toggle('is-invalid', !valid);
+      });
     });
 
     // Notfall-Zusatzfrage anzeigen
