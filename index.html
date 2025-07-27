@@ -1,157 +1,175 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sanitär Anfrageformular</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <style>
-    #spinner { display: none; }
-    .is-valid { border-color: #198754; }
-    .is-invalid { border-color: #dc3545; }
-    .honeypot { display: none; }
-  </style>
-</head>
-<body class="bg-light">
-  <div class="container mt-5 mb-5">
-    <h1 class="text-center mb-4">Coming SOON. , GET READY - Ich brauche einen Sanitär in Zürich</h1>
-    <p class="text-center">Wir verbinden Sie kostenlos und unverbindlich mit einem passenden Sanitärbetrieb in Ihrer Nähe. Füllen Sie bitte dieses kurze Formular aus – wir melden uns rasch bei Ihnen.</p>
-
-    <form id="kontaktformular" action="https://formsubmit.co/info@anfragepro.ch" method="POST">
-      <input type="hidden" name="_next" value="https://anfragepro.ch/thankyou.html">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="text" name="_honey" class="honeypot">
-
-      <div class="mb-3">
-        <label for="name" class="form-label">Ihr Name *</label>
-        <input type="text" name="Name" class="form-control" id="name" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="telefon" class="form-label">Ihre Telefonnummer *</label>
-        <input type="tel" name="Telefon" class="form-control" id="telefon" required>
-      </div>
-
-      <div class="mb-3">
-        <label for="email" class="form-label">Ihre E-Mail-Adresse *</label>
-        <input type="email" name="Email" class="form-control" id="email" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Adresse des Einsatzortes *</label>
-        <input type="text" name="Strasse" class="form-control mb-2" id="strasse" placeholder="Strasse und Hausnummer" required>
-        <input type="text" name="PLZ" class="form-control mb-2" id="plz" placeholder="Postleitzahl" required>
-        <input type="text" name="Ort" class="form-control" id="ort" placeholder="Ort / Stadt" required>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Was benötigen Sie? *</label>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="Bedarf" value="Notfall" id="notfall" required>
-          <label class="form-check-label" for="notfall">Notfall (Rohrbruch, Wasserschaden...)</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="Bedarf" value="Badumbau" id="umbau">
-          <label class="form-check-label" for="umbau">Badumbau oder Renovation</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="Bedarf" value="Beratung" id="beratung">
-          <label class="form-check-label" for="beratung">Beratung</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="Bedarf" value="Sonstiges" id="sonstiges">
-          <label class="form-check-label" for="sonstiges">Sonstiges</label>
-        </div>
-      </div>
-
-      <div class="mb-3 d-none" id="notfallDetails">
-        <label for="notfallUhrzeit" class="form-label">Wann ist der Schaden aufgetreten?</label>
-        <input type="date" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
-      </div>
-
-      <div class="mb-3">
-        <label for="anliegen" class="form-label">Bitte beschreiben Sie Ihr Anliegen:</label>
-        <textarea class="form-control" name="Anliegen" id="anliegen" rows="3"></textarea>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Wie dringend ist Ihr Anliegen? *</label>
-        <div class="form-check">
-          <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit" value="So schnell wie möglich" id="dringend">
-          <label class="form-check-label" for="dringend">So schnell wie möglich</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit" value="In den nächsten 3 Tagen" id="bald">
-          <label class="form-check-label" for="bald">In den nächsten 3 Tagen</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit" value="Später / Termin vereinbaren" id="spaeter">
-          <label class="form-check-label" for="spaeter">Später / Termin vereinbaren</label>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="zusatz" class="form-label">Zusätzliche Informationen</label>
-        <textarea class="form-control" name="Zusatz" id="zusatz" rows="2"></textarea>
-      </div>
-
-      <button type="submit" class="btn btn-primary">
-        <span id="spinner" class="spinner-border spinner-border-sm me-2"></span>
-        Absenden
-      </button>
-    </form>
-
-    <div class="text-center mt-4">
-      <p class="text-muted">🚨 Soforthilfe? Schreiben Sie uns auf WhatsApp:</p>
-      <a href="https://wa.me/41791234567" class="btn btn-success">Jetzt per WhatsApp</a>
-    </div>
-  </div>
-
-  <script>
-    // Live-Validation
-    document.getElementById('email').addEventListener('input', function () {
-      this.classList.toggle('is-valid', this.value.includes('@'));
-      this.classList.toggle('is-invalid', !this.value.includes('@'));
-    });
-
-    document.getElementById('telefon').addEventListener('input', function () {
-      const valid = /^[\\d\\s\\+\\-\\/]{6,}$/.test(this.value);
-      this.classList.toggle('is-valid', valid);
-      this.classList.toggle('is-invalid', !valid);
-    });
-
-    // Adresse-Felder Validierung
-    ['strasse', 'plz', 'ort'].forEach(id => {
-      const feld = document.getElementById(id);
-      feld.addEventListener('input', function () {
-        const valid = this.value.trim().length > 2;
-        this.classList.toggle('is-valid', valid);
-        this.classList.toggle('is-invalid', !valid);
-      });
-    });
-
-    // Notfall-Zusatzfrage anzeigen
-    document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
-      input.addEventListener('change', function () {
-        document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
-      });
-    });
-
-    // Nur eine Checkbox bei Dringlichkeit erlaubt
-    document.querySelectorAll('.dringlichkeit-check').forEach(checkbox => {
-      checkbox.addEventListener('change', function () {
-        if (this.checked) {
-          document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
-            if (cb !== this) cb.checked = false;
-          });
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanitär Anfrageformular</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        #spinner {
+            display: none;
         }
-      });
-    });
 
-    // Spinner beim Absenden anzeigen
-    document.getElementById("kontaktformular").addEventListener("submit", function () {
-      document.getElementById("spinner").style.display = "inline-block";
-    });
-  </script>
+        .honeypot {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <div class="container mt-5 mb-5">
+        <h1 class="text-center mb-4">Coming SOON. , GET READY - Ich brauche einen Sanitär in Zürich</h1>
+        <p class="text-center">Wir verbinden Sie kostenlos und unverbindlich mit einem passenden Sanitärbetrieb in Ihrer
+            Nähe. Füllen Sie bitte dieses kurze Formular aus – wir melden uns rasch bei Ihnen.</p>
+
+        <form id="kontaktformular" action="https://formsubmit.co/info@anfragepro.ch" method="POST" novalidate>
+            <input type="hidden" name="_next" value="https://anfragepro.ch/thankyou.html">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="text" name="_honey" class="honeypot">
+
+            <div class="mb-3">
+                <label for="name" class="form-label">Ihr Name *</label>
+                <input type="text" name="Name" class="form-control" id="name" required>
+                <div class="invalid-feedback">Bitte geben Sie Ihren Namen ein.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="telefon" class="form-label">Ihre Telefonnummer *</label>
+                <input type="tel" name="Telefon" class="form-control" id="telefon" required pattern="^[0-9]{6,15}$"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                <div class="invalid-feedback">Bitte geben Sie eine gültige Telefonnummer ein (mind. 9 Ziffern)</div>
+
+            </div>
+
+            <div class="mb-3">
+                <label for="email" class="form-label">Ihre E-Mail-Adresse *</label>
+                <input type="email" name="Email" class="form-control" id="email" required>
+                <div class="invalid-feedback">Bitte geben Sie eine gültige E-Mail-Adresse ein.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="strasse" class="form-label">Strasse und Nr. *</label>
+                <input type="text" name="Strasse" class="form-control" id="strasse" required>
+                <div class="invalid-feedback">Bitte geben Sie die Strasse ein.</div>
+            </div>
+
+            <div class="mb-3 row">
+                <div class="col-md-4">
+                    <label for="plz" class="form-label">PLZ *</label>
+                    <input type="text" name="PLZ" class="form-control" id="plz" required>
+                    <div class="invalid-feedback">Bitte PLZ eingeben.</div>
+                </div>
+                <div class="col-md-8">
+                    <label for="ort" class="form-label">Ort *</label>
+                    <input type="text" name="Ort" class="form-control" id="ort" required>
+                    <div class="invalid-feedback">Bitte Ort eingeben.</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Was benötigen Sie? *</label>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Bedarf" value="Notfall" id="notfall" required>
+                    <label class="form-check-label" for="notfall">Notfall (Rohrbruch, Wasserschaden...)</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Bedarf" value="Badumbau" id="umbau">
+                    <label class="form-check-label" for="umbau">Badumbau oder Renovation</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Bedarf" value="Beratung" id="beratung">
+                    <label class="form-check-label" for="beratung">Beratung</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="Bedarf" value="Sonstiges" id="sonstiges">
+                    <label class="form-check-label" for="sonstiges">Sonstiges</label>
+                </div>
+                <div class="invalid-feedback d-block" id="bedarfError" style="display:none;">Bitte wählen Sie einen
+                    Bedarf aus.</div>
+            </div>
+
+            <div class="mb-3 d-none" id="notfallDetails">
+                <label for="notfallUhrzeit" class="form-label">Wann ist der Schaden aufgetreten?</label>
+                <input type="date" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
+            </div>
+
+            <div class="mb-3">
+                <label for="anliegen" class="form-label">Bitte beschreiben Sie Ihr Anliegen:</label>
+                <textarea class="form-control" name="Anliegen" id="anliegen" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Wie dringend ist Ihr Anliegen? *</label>
+                <div class="form-check">
+                    <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                        value="So schnell wie möglich" id="dringend">
+                    <label class="form-check-label" for="dringend">So schnell wie möglich</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                        value="In den nächsten 3 Tagen" id="bald">
+                    <label class="form-check-label" for="bald">In den nächsten 3 Tagen</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                        value="Später / Termin vereinbaren" id="spaeter">
+                    <label class="form-check-label" for="spaeter">Später / Termin vereinbaren</label>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="zusatz" class="form-label">Zusätzliche Informationen</label>
+                <textarea class="form-control" name="Zusatz" id="zusatz" rows="2"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <span id="spinner" class="spinner-border spinner-border-sm me-2"></span>
+                Absenden
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <p class="text-muted">🚨 Soforthilfe? Schreiben Sie uns auf WhatsApp:</p>
+            <a href="https://wa.me/41791234567" class="btn btn-success">Jetzt per WhatsApp</a>
+        </div>
+    </div>
+
+    <script>
+        // Nur eine Checkbox gleichzeitig
+        document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (this.checked) {
+                    document.querySelectorAll('.dringlichkeit-check').forEach(other => {
+                        if (other !== this) other.checked = false;
+                    });
+                }
+            });
+        });
+
+        // Zeige Zusatzfrage bei Notfall
+        document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
+            input.addEventListener('change', function () {
+                document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
+            });
+        });
+
+        // Bootstrap Validierung
+        document.getElementById('kontaktformular').addEventListener('submit', function (event) {
+            const form = this;
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                // Wenn kein Bedarf ausgewählt, zeige Fehlermeldung
+                const selected = [...document.querySelectorAll('input[name="Bedarf"]')].some(r => r.checked);
+                document.getElementById('bedarfError').style.display = selected ? "none" : "block";
+            }
+
+            form.classList.add('was-validated');
+            document.getElementById("spinner").style.display = "inline-block";
+        });
+    </script>
 </body>
+
 </html>
