@@ -104,7 +104,7 @@
 
         <div class="mb-3 d-none" id="notfallDetails">
           <label for="notfallUhrzeit" class="form-label">Wann ist der Schaden aufgetreten?</label>
-          <input type="date" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
+          <input type="datetime-local" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
         </div>
 
         <button type="button" class="btn btn-secondary prev-step">Zurück</button>
@@ -137,7 +137,12 @@
           </div>
         </div>
 
-        <!-- Bild-Upload -->
+        <!-- Wunschtermin-Feld -->
+        <div class="mb-3 d-none" id="terminWunschBlock">
+          <label for="terminwunsch" class="form-label">Falls Sie einen Wunschtermin haben:</label>
+          <input type="datetime-local" name="Terminwunsch" id="terminwunsch" class="form-control">
+        </div>
+
         <div class="mb-3">
           <label for="bild" class="form-label">Möchten Sie ein Bild oder Dokument zu Ihrer Anfrage hinzufügen? (optional)</label>
           <input type="file" name="Bild" id="bild" class="form-control" accept="image/*">
@@ -161,8 +166,6 @@
         </button>
       </div>
     </form>
-
-    
   </div>
 
   <script>
@@ -181,8 +184,23 @@
 
     document.querySelectorAll(".next-step").forEach(btn => {
       btn.addEventListener("click", () => {
-        if (currentStep < steps.length - 1) currentStep++;
-        showStep(currentStep);
+        const currentFormPart = steps[currentStep];
+        const inputs = currentFormPart.querySelectorAll("input, select, textarea");
+        let valid = true;
+
+        inputs.forEach(input => {
+          if (!input.checkValidity()) {
+            valid = false;
+            input.classList.add("is-invalid");
+          } else {
+            input.classList.remove("is-invalid");
+          }
+        });
+
+        if (valid && currentStep < steps.length - 1) {
+          currentStep++;
+          showStep(currentStep);
+        }
       });
     });
 
@@ -193,25 +211,29 @@
       });
     });
 
-    // Notfall Zusatzfeld
     document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
       input.addEventListener('change', function () {
         document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
       });
     });
 
-    // Nur eine Checkbox
     document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
       cb.addEventListener('change', function () {
         if (this.checked) {
           document.querySelectorAll('.dringlichkeit-check').forEach(other => {
             if (other !== this) other.checked = false;
           });
+
+          const terminBlock = document.getElementById("terminWunschBlock");
+          if (this.id === "spaeter") {
+            terminBlock.classList.remove("d-none");
+          } else {
+            terminBlock.classList.add("d-none");
+          }
         }
       });
     });
 
-    // Bootstrap Validierung
     document.getElementById('kontaktformular').addEventListener('submit', function (event) {
       const form = this;
       if (!form.checkValidity()) {
@@ -221,6 +243,8 @@
       form.classList.add('was-validated');
       document.getElementById("spinner").style.display = "inline-block";
     });
+
+    showStep(currentStep);
   </script>
 </body>
 
