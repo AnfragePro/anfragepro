@@ -2,264 +2,299 @@
 <html lang="de">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sanitär Anfrageformular</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <style>
-    #spinner {
-      display: none;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sanitär Anfrageformular</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        #spinner {
+            display: none;
+        }
 
-    .honeypot {
-      display: none;
-    }
+        .honeypot {
+            display: none;
+        }
 
-    .step {
-      display: none;
-    }
+        .step {
+            display: none;
+        }
 
-    .step.active {
-      display: block;
-    }
-  </style>
+        .step.active {
+            display: block;
+        }
+    </style>
 </head>
 
 <body class="bg-light">
-  <div class="container mt-5 mb-5">
-    <h1 class="text-center mb-4">Ich brauche einen Sanitär in Zürich</h1>
-    <p class="text-center">Wir verbinden Sie kostenlos und unverbindlich mit einem passenden Sanitärbetrieb in Ihrer Nähe.</p>
+    <div class="container mt-5 mb-5">
+        <h1 class="text-center mb-4">Ich brauche einen Sanitär in Zürich</h1>
+        <p class="text-center">Wir verbinden Sie kostenlos und unverbindlich mit einem passenden Sanitärbetrieb in Ihrer
+            Nähe.</p>
 
-    <!-- Fortschrittsanzeige -->
-    <div class="progress mb-4">
-      <div class="progress-bar" id="progressBar" role="progressbar" style="width: 25%;">Schritt 1 von 4</div>
+        <!-- Fortschrittsanzeige -->
+        <div class="progress mb-4">
+            <div class="progress-bar" id="progressBar" role="progressbar" style="width: 25%;">Schritt 1 von 4</div>
+        </div>
+
+        <form id="kontaktformular" action="https://formsubmit.co/info@anfragepro.ch" method="POST"
+            enctype="multipart/form-data" novalidate>
+            <div id="dankeMessage" class="alert alert-success mt-4 d-none text-center">
+                ✅ Vielen Dank! Ihre Anfrage wurde erfolgreich übermittelt. Wir melden uns so schnell wie möglich.
+            </div>
+
+            <input type="hidden" name="_captcha" value="false">
+            <input type="text" name="_honey" class="honeypot">
+
+            <!-- Schritt 1: Kontakt -->
+            <div class="step active">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Ihr Name *</label>
+                    <input type="text" name="Name" class="form-control" id="name" required>
+                    <div class="invalid-feedback">Bitte geben Sie Ihren Namen ein.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="telefon" class="form-label">Ihre Telefonnummer *</label>
+                    <input type="tel" name="Telefon" class="form-control" id="telefon" required pattern="^[0-9]{6,15}$"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                    <div class="invalid-feedback">Nur Zahlen, mind. 6 Ziffern.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Ihre E-Mail-Adresse *</label>
+                    <input type="email" name="Email" class="form-control" id="email" required>
+                    <div class="invalid-feedback">Gültige E-Mail eingeben.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="strasse" class="form-label">Strasse und Nr. *</label>
+                    <input type="text" name="Strasse" class="form-control" id="strasse" required>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-md-4">
+                        <label for="plz" class="form-label">PLZ *</label>
+                        <input type="text" name="PLZ" class="form-control" id="plz" required>
+                    </div>
+                    <div class="col-md-8">
+                        <label for="ort" class="form-label">Ort *</label>
+                        <input type="text" name="Ort" class="form-control" id="ort" required>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-primary next-step">Weiter</button>
+            </div>
+
+            <!-- Schritt 2: Bedarf -->
+            <div class="step">
+                <div class="mb-3">
+                    <label class="form-label">Was benötigen Sie? *</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Bedarf" value="Notfall" id="notfall"
+                            required>
+                        <label class="form-check-label" for="notfall">Notfall (Rohrbruch, Wasserschaden...)</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Bedarf" value="Badumbau" id="umbau">
+                        <label class="form-check-label" for="umbau">Badumbau / Renovation</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Bedarf" value="Beratung" id="beratung">
+                        <label class="form-check-label" for="beratung">Beratung</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="Bedarf" value="Sonstiges" id="sonstiges">
+                        <label class="form-check-label" for="sonstiges">Sonstiges</label>
+                    </div>
+                </div>
+
+                <div class="mb-3 d-none" id="notfallDetails">
+                    <label for="notfallUhrzeit" class="form-label">Wann ist der Schaden aufgetreten?</label>
+                    <input type="datetime-local" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-step">Zurück</button>
+                <button type="button" class="btn btn-primary next-step">Weiter</button>
+            </div>
+
+            <!-- Schritt 3: Details -->
+            <div class="step">
+                <div class="mb-3">
+                    <label for="anliegen" class="form-label">Beschreiben Sie Ihr Anliegen:</label>
+                    <textarea class="form-control" name="Anliegen" id="anliegen" rows="3"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Wie dringend ist Ihr Anliegen? *</label>
+                    <div class="form-check">
+                        <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                            value="So schnell wie möglich" id="dringend">
+                        <label class="form-check-label" for="dringend">So schnell wie möglich</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                            value="In den nächsten 3 Tagen" id="bald">
+                        <label class="form-check-label" for="bald">In den nächsten 3 Tagen</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
+                            value="Später / Termin vereinbaren" id="spaeter">
+                        <label class="form-check-label" for="spaeter">Später / Termin vereinbaren</label>
+                    </div>
+                </div>
+
+                <!-- Wunschtermin-Feld -->
+                <div class="mb-3 d-none" id="terminWunschBlock">
+                    <label for="terminwunsch" class="form-label">Falls Sie einen Wunschtermin haben:</label>
+                    <input type="datetime-local" name="Terminwunsch" id="terminwunsch" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="bild" class="form-label">Möchten Sie ein Bild oder Dokument zu Ihrer Anfrage hinzufügen?
+                        (optional)</label>
+                    <input type="file" name="Bild" id="bild" class="form-control" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label for="zusatz" class="form-label">Zusätzliche Informationen</label>
+                    <textarea class="form-control" name="Zusatz" id="zusatz" rows="2"></textarea>
+                </div>
+
+                <button type="button" class="btn btn-secondary prev-step">Zurück</button>
+                <button type="button" class="btn btn-primary next-step">Weiter</button>
+            </div>
+
+            <!-- Schritt 4: Absenden -->
+            <div class="step">
+                <p class="mb-3">Bitte überprüfen Sie Ihre Angaben und senden Sie das Formular ab.</p>
+                <button type="button" class="btn btn-secondary prev-step">Zurück</button>
+                <button type="submit" class="btn btn-success">
+                    <span id="spinner" class="spinner-border spinner-border-sm me-2"></span> Absenden
+                </button>
+            </div>
+        </form>
     </div>
 
-    <form id="kontaktformular" action="https://formsubmit.co/info@anfragepro.ch" method="POST" enctype="multipart/form-data" novalidate>
-      <input type="hidden" name="_next" value="https://anfragepro.ch/thankyou.html">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="text" name="_honey" class="honeypot">
+    <script>
+        let currentStep = 0;
+        const steps = document.querySelectorAll(".step");
+        const progressBar = document.getElementById("progressBar");
 
-      <!-- Schritt 1: Kontakt -->
-      <div class="step active">
-        <div class="mb-3">
-          <label for="name" class="form-label">Ihr Name *</label>
-          <input type="text" name="Name" class="form-control" id="name" required>
-          <div class="invalid-feedback">Bitte geben Sie Ihren Namen ein.</div>
-        </div>
-
-        <div class="mb-3">
-          <label for="telefon" class="form-label">Ihre Telefonnummer *</label>
-          <input type="tel" name="Telefon" class="form-control" id="telefon" required pattern="^[0-9]{6,15}$"
-            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-          <div class="invalid-feedback">Nur Zahlen, mind. 6 Ziffern.</div>
-        </div>
-
-        <div class="mb-3">
-          <label for="email" class="form-label">Ihre E-Mail-Adresse *</label>
-          <input type="email" name="Email" class="form-control" id="email" required>
-          <div class="invalid-feedback">Gültige E-Mail eingeben.</div>
-        </div>
-
-        <div class="mb-3">
-          <label for="strasse" class="form-label">Strasse und Nr. *</label>
-          <input type="text" name="Strasse" class="form-control" id="strasse" required>
-        </div>
-
-        <div class="mb-3 row">
-          <div class="col-md-4">
-            <label for="plz" class="form-label">PLZ *</label>
-            <input type="text" name="PLZ" class="form-control" id="plz" required>
-          </div>
-          <div class="col-md-8">
-            <label for="ort" class="form-label">Ort *</label>
-            <input type="text" name="Ort" class="form-control" id="ort" required>
-          </div>
-        </div>
-
-        <button type="button" class="btn btn-primary next-step">Weiter</button>
-      </div>
-
-      <!-- Schritt 2: Bedarf -->
-      <div class="step">
-        <div class="mb-3">
-          <label class="form-label">Was benötigen Sie? *</label>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="Bedarf" value="Notfall" id="notfall" required>
-            <label class="form-check-label" for="notfall">Notfall (Rohrbruch, Wasserschaden...)</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="Bedarf" value="Badumbau" id="umbau">
-            <label class="form-check-label" for="umbau">Badumbau / Renovation</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="Bedarf" value="Beratung" id="beratung">
-            <label class="form-check-label" for="beratung">Beratung</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="Bedarf" value="Sonstiges" id="sonstiges">
-            <label class="form-check-label" for="sonstiges">Sonstiges</label>
-          </div>
-        </div>
-
-        <div class="mb-3 d-none" id="notfallDetails">
-          <label for="notfallUhrzeit" class="form-label">Wann ist der Schaden aufgetreten?</label>
-          <input type="datetime-local" class="form-control" name="Notfall-Zeit" id="notfallUhrzeit">
-        </div>
-
-        <button type="button" class="btn btn-secondary prev-step">Zurück</button>
-        <button type="button" class="btn btn-primary next-step">Weiter</button>
-      </div>
-
-      <!-- Schritt 3: Details -->
-      <div class="step">
-        <div class="mb-3">
-          <label for="anliegen" class="form-label">Beschreiben Sie Ihr Anliegen:</label>
-          <textarea class="form-control" name="Anliegen" id="anliegen" rows="3"></textarea>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Wie dringend ist Ihr Anliegen? *</label>
-          <div class="form-check">
-            <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
-              value="So schnell wie möglich" id="dringend">
-            <label class="form-check-label" for="dringend">So schnell wie möglich</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
-              value="In den nächsten 3 Tagen" id="bald">
-            <label class="form-check-label" for="bald">In den nächsten 3 Tagen</label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input dringlichkeit-check" type="checkbox" name="Dringlichkeit"
-              value="Später / Termin vereinbaren" id="spaeter">
-            <label class="form-check-label" for="spaeter">Später / Termin vereinbaren</label>
-          </div>
-        </div>
-
-        <!-- Wunschtermin-Feld -->
-        <div class="mb-3 d-none" id="terminWunschBlock">
-          <label for="terminwunsch" class="form-label">Falls Sie einen Wunschtermin haben:</label>
-          <input type="datetime-local" name="Terminwunsch" id="terminwunsch" class="form-control">
-        </div>
-
-        <div class="mb-3">
-          <label for="bild" class="form-label">Möchten Sie ein Bild oder Dokument zu Ihrer Anfrage hinzufügen? (optional)</label>
-          <input type="file" name="Bild" id="bild" class="form-control" accept="image/*">
-        </div>
-
-        <div class="mb-3">
-          <label for="zusatz" class="form-label">Zusätzliche Informationen</label>
-          <textarea class="form-control" name="Zusatz" id="zusatz" rows="2"></textarea>
-        </div>
-
-        <button type="button" class="btn btn-secondary prev-step">Zurück</button>
-        <button type="button" class="btn btn-primary next-step">Weiter</button>
-      </div>
-
-      <!-- Schritt 4: Absenden -->
-      <div class="step">
-        <p class="mb-3">Bitte überprüfen Sie Ihre Angaben und senden Sie das Formular ab.</p>
-        <button type="button" class="btn btn-secondary prev-step">Zurück</button>
-        <button type="submit" class="btn btn-success">
-          <span id="spinner" class="spinner-border spinner-border-sm me-2"></span> Absenden
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <script>
-  let currentStep = 0;
-  const steps = document.querySelectorAll(".step");
-  const progressBar = document.getElementById("progressBar");
-
-  function showStep(n) {
-    steps.forEach((step, index) => {
-      step.classList.toggle("active", index === n);
-    });
-    const percent = ((n + 1) / steps.length) * 100;
-    progressBar.style.width = percent + "%";
-    progressBar.innerText = `Schritt ${n + 1} von ${steps.length}`;
-  }
-
-  // Weiter-Button mit Validierung pro Schritt
-  document.querySelectorAll(".next-step").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const currentFormPart = steps[currentStep];
-      const inputs = currentFormPart.querySelectorAll("input, select, textarea");
-      let valid = true;
-
-      inputs.forEach(input => {
-        if (!input.checkValidity()) {
-          valid = false;
-          input.classList.add("is-invalid");
-        } else {
-          input.classList.remove("is-invalid");
+        function showStep(n) {
+            steps.forEach((step, index) => {
+                step.classList.toggle("active", index === n);
+            });
+            const percent = ((n + 1) / steps.length) * 100;
+            progressBar.style.width = percent + "%";
+            progressBar.innerText = `Schritt ${n + 1} von ${steps.length}`;
         }
-      });
 
-      if (valid && currentStep < steps.length - 1) {
-        currentStep++;
-        showStep(currentStep);
-      }
-    });
-  });
+        // Weiter-Button mit Validierung pro Schritt
+        document.querySelectorAll(".next-step").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const currentFormPart = steps[currentStep];
+                const inputs = currentFormPart.querySelectorAll("input, select, textarea");
+                let valid = true;
 
-  // Live Validierung: Entfernt Fehlermeldung beim Korrigieren
-  document.querySelectorAll("input, textarea, select").forEach(input => {
-    input.addEventListener("input", () => {
-      if (input.checkValidity()) {
-        input.classList.remove("is-invalid");
-      }
-    });
-  });
+                inputs.forEach(input => {
+                    if (!input.checkValidity()) {
+                        valid = false;
+                        input.classList.add("is-invalid");
+                    } else {
+                        input.classList.remove("is-invalid");
+                    }
+                });
 
-  // Zurück-Button
-  document.querySelectorAll(".prev-step").forEach(btn => {
-    btn.addEventListener("click", () => {
-      if (currentStep > 0) currentStep--;
-      showStep(currentStep);
-    });
-  });
-
-  // Zusatzfeld bei Bedarf = Notfall
-  document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
-    input.addEventListener('change', function () {
-      document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
-    });
-  });
-
-  // Dringlichkeit: nur eine Checkbox + Wunschtermin anzeigen
-  document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
-    cb.addEventListener('change', function () {
-      if (this.checked) {
-        document.querySelectorAll('.dringlichkeit-check').forEach(other => {
-          if (other !== this) other.checked = false;
+                if (valid && currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
         });
 
-        const terminBlock = document.getElementById("terminWunschBlock");
-        if (this.id === "spaeter") {
-          terminBlock.classList.remove("d-none");
-        } else {
-          terminBlock.classList.add("d-none");
-        }
-      }
-    });
-  });
+        // Live Validierung: Entfernt Fehlermeldung beim Korrigieren
+        document.querySelectorAll("input, textarea, select").forEach(input => {
+            input.addEventListener("input", () => {
+                if (input.checkValidity()) {
+                    input.classList.remove("is-invalid");
+                }
+            });
+        });
 
-  // Validierung beim Absenden
-  document.getElementById('kontaktformular').addEventListener('submit', function (event) {
-    const form = this;
-    if (!form.checkValidity()) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    form.classList.add('was-validated');
-    document.getElementById("spinner").style.display = "inline-block";
-  });
+        // Zurück-Button
+        document.querySelectorAll(".prev-step").forEach(btn => {
+            btn.addEventListener("click", () => {
+                if (currentStep > 0) currentStep--;
+                showStep(currentStep);
+            });
+        });
 
-  showStep(currentStep);
-</script>
+        // Zusatzfeld bei Bedarf = Notfall
+        document.querySelectorAll('input[name="Bedarf"]').forEach(input => {
+            input.addEventListener('change', function () {
+                document.getElementById('notfallDetails').classList.toggle('d-none', this.value !== 'Notfall');
+            });
+        });
+
+        // Dringlichkeit: nur eine Checkbox + Wunschtermin anzeigen
+        document.querySelectorAll('.dringlichkeit-check').forEach(cb => {
+            cb.addEventListener('change', function () {
+                if (this.checked) {
+                    document.querySelectorAll('.dringlichkeit-check').forEach(other => {
+                        if (other !== this) other.checked = false;
+                    });
+
+                    const terminBlock = document.getElementById("terminWunschBlock");
+                    if (this.id === "spaeter") {
+                        terminBlock.classList.remove("d-none");
+                    } else {
+                        terminBlock.classList.add("d-none");
+                    }
+                }
+            });
+        });
+
+        // Validierung beim Absenden
+        // Formular absenden mit fetch() statt Weiterleitung
+        document.getElementById('kontaktformular').addEventListener('submit', function (event) {
+            const form = this;
+            event.preventDefault();
+
+            if (!form.checkValidity()) {
+                event.stopPropagation();
+                form.classList.add('was-validated');
+                return;
+            }
+
+            form.classList.add('was-validated');
+            document.getElementById("spinner").style.display = "inline-block";
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: "POST",
+                body: formData,
+                headers: { 'Accept': 'application/json' }
+            })
+                .then(response => {
+                    document.getElementById("spinner").style.display = "none";
+
+                    if (response.ok) {
+                        form.classList.add("d-none");
+                        document.getElementById("dankeMessage").classList.remove("d-none");
+                    } else {
+                        alert("Fehler beim Absenden. Bitte versuchen Sie es später erneut.");
+                    }
+                })
+                .catch(error => {
+                    document.getElementById("spinner").style.display = "none";
+                    alert("Ein unerwarteter Fehler ist aufgetreten: " + error.message);
+                });
+        });
+
+
+        showStep(currentStep);
+    </script>
 
 </body>
 
