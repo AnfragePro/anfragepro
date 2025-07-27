@@ -76,5 +76,27 @@
             <button type="submit" class="btn btn-primary">Absenden</button>
         </form>
     </div>
+     <script>
+    document.getElementById("kontaktformular").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      try {
+        await fetch("https://formsubmit.co/YOUR@EMAIL.CH", {
+          method: "POST",
+          body: formData
+        });
+
+        // Formular ausblenden, Dankeseite anzeigen
+        document.getElementById("form-section").style.display = "none";
+        document.getElementById("danke-section").classList.remove("d-none");
+
+      } catch (err) {
+        alert("Es gab ein Problem beim Absenden. Bitte versuchen Sie es erneut.");
+      }
+    });
+  </script>
 </body>
 </html>
